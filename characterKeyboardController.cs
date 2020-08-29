@@ -7,7 +7,7 @@ public class characterKeyboardController : MonoBehaviour
 {
 
     private Boolean jumpBln=true;
-    private float jmpHeight=5f, walkSpeed=0.05f;
+    public float jmpHeight=5f, walkSpeed=0.05f;
 
 
 
