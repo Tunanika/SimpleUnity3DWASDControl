@@ -1,82 +1,69 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class characterKeyboardController : MonoBehaviour
+//Important Note!!!
+//You need a character controller for this code to work
+
+public class PlayerMovement : MonoBehaviour
 {
+    //You need to attach your camera 
+    public Transform cam;
 
-    private Boolean jumpBln=true;
-    public float jmpHeight=5f, walkSpeed=0.05f;
-
-
-
+    //You need to attach your character controller
+    public CharacterController controller;
+    
+    //walk speed of your character
+    public float speed = 6f;
+    
+    //How smooth your character turn 
+    public float TurnSmooth = 0.1f;
+    
+    //velocity of smooth turn
+    float turnSmoothVelocity;
+    private float verticalvelocity;
+    
+    //Gravity
+    public float gravity = 9.8f;
+    
+    //Jump Force of your character
+    public float jumpForce = 6f;
+         
     void Update()
     {
-        //Jump
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            jump();
-        }
-        //Walk
-        if (Input.GetKey(KeyCode.W))
-        {
-            UnityEngine.Debug.Log("DEBUG: " + "W");
-            walkW();
-        }
-        if (Input.GetKey(KeyCode.A))
-        {
-            UnityEngine.Debug.Log("DEBUG: " + "A");
-            walkA();
-        }
-        if (Input.GetKey(KeyCode.S))
-        {
-            UnityEngine.Debug.Log("DEBUG: " + "S");
-            walkS();
-        }
-        if (Input.GetKey(KeyCode.D))
-        {
-            UnityEngine.Debug.Log("DEBUG: " + "D");
-            walkD();
-        }
-    }
+        
 
-    private void jump()
-    {
-        if (jumpBln)
+        float horizontal = Input.GetAxisRaw("Horizontal");
+        float vertical = Input.GetAxisRaw("Vertical");
+        Vector3 direction = new Vector3(horizontal, 0f, vertical).normalized;
+
+        if(direction.magnitude >= 0.01f)
         {
-            jumpBln = false;
-            transform.position += new Vector3(0 ,1*jmpHeight, 0);
-            UnityEngine.Debug.Log("DEBUG: " + "Jump");
-            StartCoroutine(jumpTimer());
+            float targetAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg + cam.eulerAngles.y;
+            float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnSmoothVelocity, TurnSmooth);
+            transform.rotation = Quaternion.Euler(0f, angle, 0f);
+
+            Vector3 moveDir = Quaternion.Euler(0f, targetAngle, 0f) * Vector3.forward;
+            controller.Move(moveDir.normalized * speed * Time.deltaTime);
         }
+
+
+        if (controller.isGrounded)
+        {
+            verticalvelocity = -gravity * Time.deltaTime;
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                verticalvelocity = jumpForce;
+
+            }
+        }
+
         else
         {
-            UnityEngine.Debug.Log("DEBUG: " + "Unable to jump");
+            verticalvelocity -= gravity * Time.deltaTime;
         }
-    }
 
-    private void walkW()
-    {
-        transform.position += new Vector3(0,0,1*walkSpeed);
+        Vector3 moveVector = new Vector3(0, verticalvelocity, 0);
+        controller.Move(moveVector * Time.deltaTime);
     }
-    private void walkA()
-    {
-        transform.position += new Vector3(-1*walkSpeed, 0, 0);
-    }
-    private void walkS()
-    {
-        transform.position += new Vector3(0, 0,-1 * walkSpeed);
-    }
-    private void walkD()
-    {
-        transform.position += new Vector3(1*walkSpeed, 0,0);
-    }
-
-    //Timers
-    private IEnumerator jumpTimer()
-    {
-        yield return new WaitForSeconds(1);
-        jumpBln = true;
-    }
+    
+   
 }
