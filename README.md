@@ -17,3 +17,4 @@ Read the license file:
 https://raw.githubusercontent.com/0rbianta/SimpleUnity3DWASDControl/master/LICENSE
 
 Copyright (c) 2020 0rbianta
+Copyright (c) 2020 Tunanika
