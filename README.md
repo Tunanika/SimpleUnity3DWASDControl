@@ -16,5 +16,5 @@ The project was published under MIT license. So you have a very wide right of us
 Read the license file:
 https://raw.githubusercontent.com/0rbianta/SimpleUnity3DWASDControl/master/LICENSE
 
-Copyright (c) 2020 0rbianta
+Copyright (c) 2020 0rbianta<br>
 Copyright (c) 2020 Tunanika
